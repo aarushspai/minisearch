@@ -1,0 +1,35 @@
+@@ Binary Search
+Binary search finds an item in a sorted array by repeatedly halving the search range. Compare the middle element with the target; if the target is larger search the right half, otherwise search the left half. Each step discards half of the remaining elements, so the running time is logarithmic. Binary search only works when the data is sorted.
+
+@@ Bubble Sort and Merge Sort
+Sorting arranges data in order. Bubble sort repeatedly swaps adjacent elements that are in the wrong order and is simple but slow for large arrays. Merge sort divides the array into halves, sorts each half recursively, and merges the sorted halves. Merge sort runs in n log n time and is a stable sorting algorithm.
+
+@@ Hash Tables
+A hash table stores key value pairs and finds them quickly using a hash function. The hash function converts a key into an array index. When two keys map to the same index a collision occurs, which can be handled with chaining using linked lists. A good hash function spreads keys evenly so lookup stays fast on average.
+
+@@ Linked Lists
+A linked list is a chain of nodes where each node stores data and a pointer to the next node. Unlike an array, inserting or deleting a node in a linked list does not require shifting elements. However searching a linked list is slow because you must walk through the nodes one by one. Pointers make linked lists flexible but need careful memory management in C.
+
+@@ Stacks and Queues
+A stack follows the last in first out rule, like a pile of plates. Push adds an item on top and pop removes it. A queue follows first in first out, like people waiting in a line, with enqueue at the back and dequeue at the front. Stacks power undo features and function calls while queues manage scheduling and buffering.
+
+@@ Graphs and Shortest Paths
+A graph is a set of nodes connected by edges. Graphs model road networks, social networks, and the internet. Breadth first search explores a graph level by level while the Dijkstra algorithm finds the shortest path using a priority queue. Adjacency lists store graphs efficiently when there are few edges.
+
+@@ Recursion
+Recursion is when a function calls itself to solve a smaller version of the same problem. Every recursive function needs a base case that stops the calls. Factorial and Fibonacci are classic examples. Recursion makes tree and graph problems elegant, but deep recursion can overflow the call stack.
+
+@@ Operating Systems
+An operating system manages hardware and provides services to programs. It schedules processes, allocates memory, and handles files and devices. Scheduling algorithms decide which process uses the processor next. Memory management uses techniques like paging so that many programs can run at the same time.
+
+@@ Databases and SQL
+A database stores organized data so it can be searched and updated efficiently. SQL is the language used to query relational databases with commands like select, insert, and update. Indexes work like the index of a book and make searching a table much faster. Many databases use trees to keep indexes sorted.
+
+@@ How the Internet Works
+The internet connects billions of devices using protocols. When you open a website your browser sends a request using http to a server, which replies with a page. Data travels in small packets that routers forward toward their destination. The domain name system translates names into addresses, much like a phone book.
+
+@@ Machine Learning Basics
+Machine learning lets computers learn patterns from data instead of following fixed rules. A model is trained on examples and then makes predictions on new data. Search engines use ranking models to order results by relevance. Good training data matters more than a complicated algorithm.
+
+@@ Chess Strategy
+Chess rewards planning and pattern recognition. Strong players control the center, develop their pieces early, and keep their king safe. A tactic is a short sequence of moves that wins material, while strategy is the long term plan. Studying endgames helps players convert small advantages into wins.

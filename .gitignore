@@ -1,0 +1,6 @@
+minisearch
+minisearch.exe
+test_runner
+test_runner.exe
+*.o
+.vscode/
