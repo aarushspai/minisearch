@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f7f1e5">
+<title>MiniSearch - a search engine built from scratch</title>
+<style>
+:root{color-scheme:light;--bg:#f7f1e5;--bg2:#efe6d3;--card:#fffcf5;--tx:#2a251f;--mu:#7b7062;--ac:#7a4f24;--ac2:#2f2a24;--bd:#e6dcc7;--mk:#f4dfa0;--sh:0 1px 2px rgba(60,40,10,.06),0 8px 24px -12px rgba(60,40,10,.18)}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--tx);background:radial-gradient(1100px 480px at 50% -220px,#fffaec,transparent),var(--bg);min-height:100vh}
+.w{max-width:900px;margin:0 auto;padding:38px 20px 70px}
+.hd{display:flex;align-items:center;gap:14px}
+.logo{width:46px;height:46px;border-radius:12px;background:var(--ac2);color:#f4e7c8;display:grid;place-items:center;font:700 24px Georgia,serif}
+h1{margin:0;font:600 32px/1.1 "Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;letter-spacing:-.01em}
+h1 span{color:var(--ac);font-style:italic}
+.sub{margin:4px 0 0;color:var(--mu);font-size:15px}.mu{color:var(--mu)}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 22px}
+.tags span{font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:4px 11px;border:1px solid var(--bd);border-radius:99px;background:var(--bg2);color:var(--mu)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--bd);margin-bottom:20px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer;color:var(--tx);background:var(--card);border:1px solid var(--bd);padding:9px 16px;border-radius:10px;transition:.15s}
+button.p{background:var(--ac2);color:#f8efd9;border-color:var(--ac2);font-weight:500}
+button.p:hover{background:#443c33}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;border-radius:0;padding:10px 14px;margin-bottom:-1px;color:var(--mu);font-weight:500}
+.tabs button:hover{color:var(--tx)}
+.tabs button.on{color:var(--ac2);border-bottom-color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:14px;box-shadow:var(--sh)}
+input,textarea{width:100%;padding:12px 14px;border:1px solid var(--bd);border-radius:10px;background:#fffdf8;color:var(--tx);font:inherit;margin-bottom:10px;transition:.15s}
+input:focus,textarea:focus{outline:0;border-color:var(--ac);box-shadow:0 0 0 3px rgba(122,79,36,.15)}
+.sb{position:relative}.sb input{font-size:18px;padding:15px 16px}
+.dd{position:absolute;left:0;right:0;top:58px;background:var(--card);border:1px solid var(--bd);border-radius:10px;z-index:5;display:none;box-shadow:var(--sh);overflow:hidden}
+.dd div{padding:9px 14px;cursor:pointer}.dd div:hover{background:var(--bg2)}
+.chips button{margin:6px 6px 0 0;padding:3px 12px;font-size:13px;border-radius:99px;background:var(--bg2)}
+.chips button:hover{border-color:var(--ac)}
+mark{background:var(--mk);color:inherit;border-radius:3px;padding:0 3px}
+.res .rh{display:flex;align-items:center;gap:12px}
+.rk{width:28px;height:28px;border-radius:50%;background:var(--bg2);color:var(--ac);display:grid;place-items:center;font:600 14px Georgia,serif;flex:none}
+.res b{font:600 18px "Iowan Old Style",Palatino,Georgia,serif;flex:1}
+.pill{font-size:12px;color:var(--ac);background:#f6ead0;border-radius:99px;padding:2px 10px}
+.res p{margin:8px 0 0;color:#4a4237}
+.bar{height:5px;background:var(--bg2);border-radius:3px;margin:10px 0 6px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#b98a4e,var(--ac));border-radius:3px}
+.ov{overflow-x:auto}
+table{border-collapse:collapse;margin-top:10px;font-size:14px}
+td,th{border:1px solid var(--bd);padding:5px 12px;text-align:center}
+th{background:var(--bg2);font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
+.grid .card{margin:0}
+.stat b{display:block;font:600 28px "Iowan Old Style",Georgia,serif;color:var(--ac)}
+a{color:var(--ac)}
+section[hidden]{display:none}
+footer{margin-top:32px;text-align:center;color:var(--mu);font-size:13px}
+@media(max-width:520px){h1{font-size:26px}.w{padding:22px 14px 50px}}
+</style>
+</head>
+<body>
+<div class="w">
+<header class="hd"><div class="logo">M</div><div><h1>Mini<span>Search</span></h1>
+<p class="sub">A search engine built from scratch</p></div></header>
+<div class="tags"><span>Hash table</span><span>Trie</span><span>Min-heap</span><span>Dynamic programming</span></div>
+<div class="tabs">
+<button data-t="s" class="on">Search</button><button data-t="a">Add document</button>
+<button data-t="t">Index stats</button><button data-t="e">Edit distance lab</button>
+</div>
+
+<section id="s">
+<div class="card">
+<div class="sb"><input id="q" placeholder="Try: binary search, hash collision, or a typo like binery sarch" autocomplete="off"><div class="dd" id="dd"></div></div>
+<button class="p" id="go">Search</button>
+<div class="chips" id="rc"></div>
+</div>
+<div id="out"></div>
+</section>
+
+<section id="a" hidden>
+<div class="card"><b>Add a document</b><p class="mu">It is indexed instantly, so you can search for it right away.</p>
+<input id="dt" placeholder="Title" maxlength="80"><textarea id="dx" rows="4" placeholder="Text of the document"></textarea>
+<button class="p" id="add">Index it</button><p id="am" class="mu"></p></div>
+</section>
+
+<section id="t" hidden><div id="st"></div></section>
+
+<section id="e" hidden>
+<div class="card"><b>Edit distance lab</b><p class="mu">Fewest inserts, deletes or replacements to turn one word into the other. This is the dynamic programming table behind "Did you mean".</p>
+<input id="ea" value="kitten" maxlength="14"><input id="eb" value="sitting" maxlength="14">
+<div class="ov" id="etb"></div></div>
+</section>
+<footer>Built from scratch as a Data Structures and Algorithms project</footer>
+</div>
+
+<script>
+/* ---------- sample documents (same idea as the C project) ---------- */
+const DOCS=[
+["Binary Search","Binary search finds an item in a sorted array by repeatedly halving the search range. Compare the middle element with the target, then search the left or right half. Each step discards half the elements, so the running time is logarithmic."],
+["Bubble Sort and Merge Sort","Sorting arranges data in order. Bubble sort swaps adjacent elements that are in the wrong order and is slow for large arrays. Merge sort splits the array, sorts each half recursively and merges the halves in n log n time."],
+["Hash Tables","A hash table stores key value pairs and finds them quickly using a hash function. The hash function turns a key into an array index. When two keys collide, chaining with linked lists keeps both. A good hash function spreads keys evenly."],
+["Linked Lists","A linked list is a chain of nodes, each storing data and a pointer to the next node. Inserting or deleting a node needs no shifting, unlike an array. Searching is slow because you walk the nodes one by one."],
+["Stacks and Queues","A stack follows last in first out, like a pile of plates: push adds on top and pop removes it. A queue follows first in first out, like a line of people. Stacks power undo and function calls while queues manage scheduling."],
+["Graphs and Shortest Paths","A graph is a set of nodes connected by edges and models road networks and social networks. Breadth first search explores level by level while the Dijkstra algorithm finds the shortest path using a priority queue."],
+["Recursion","Recursion is when a function calls itself to solve a smaller version of the same problem. Every recursive function needs a base case. Factorial and Fibonacci are classic examples, but deep recursion can overflow the call stack."],
+["Operating Systems","An operating system manages hardware and provides services to programs. It schedules processes, allocates memory and handles files. Scheduling algorithms decide which process uses the processor next and paging lets many programs share memory."],
+["Databases and SQL","A database stores organized data so it can be searched and updated efficiently. SQL queries relational databases with select, insert and update. Indexes work like the index of a book and make searching a table much faster, often using trees."],
+["How the Internet Works","The internet connects billions of devices using protocols. Your browser sends a request using http to a server, which replies with a page. Data travels in small packets forwarded by routers, and the domain name system translates names into addresses."],
+["Machine Learning Basics","Machine learning lets computers learn patterns from data instead of following fixed rules. A model is trained on examples and then predicts on new data. Search engines use ranking models to order results by relevance."],
+["Chess Strategy","Chess rewards planning and pattern recognition. Strong players control the center, develop pieces early and keep the king safe. A tactic is a short sequence of moves that wins material, while strategy is the long term plan."]
+];
+
+/* ---------- tokenizer ---------- */
+const STOP=new Set("the and is are was were of to in on for with as by at an it its this that from or be can has have had not but which their they into than then also such when each so if you your does do who what how there these those".split(" "));
+const words=t=>(t.toLowerCase().match(/[a-z]+/g)||[]).filter(w=>w.length>1&&w.length<32);
+
+/* ---------- inverted index: hash table with chaining ---------- */
+const TS=1031;let B,T,D,total,U;
+const hs=w=>{let x=5381;for(let i=0;i<w.length;i++)x=(x*33+w.charCodeAt(i))>>>0;return x%TS};  // djb2
+const find=w=>B[hs(w)].find(e=>e.w===w);
+
+function addDoc(title,text){
+  const id=D.length,toks=words(text).filter(w=>!STOP.has(w));
+  D.push({title,text,len:toks.length});
+  for(const w of toks){
+    let e=find(w);
+    if(!e){e={w,total:0,post:[]};B[hs(w)].push(e);U++}      // new word: chain it in its bucket
+    e.total++;
+    const p=e.post[e.post.length-1];                          // posting list: [doc, count]
+    p&&p[0]===id?p[1]++:e.post.push([id,1]);
+    let n=T;for(const c of w)n=n.c[c]||(n.c[c]={c:{},f:0});  // trie insert
+    n.f++;
+  }
+  total+=toks.length;return id;
+}
+
+/* ---------- trie autocomplete ---------- */
+function complete(prefix){
+  let n=T;for(const c of prefix){n=n.c[c];if(!n)return[]}
+  const out=[];
+  (function go(n,s){if(n.f)out.push([s,n.f]);for(const c of Object.keys(n.c).sort())go(n.c[c],s+c)})(n,prefix);
+  return out;
+}
+
+/* ---------- min-heap top-K: keep K best, evict the smallest ---------- */
+function topK(items,k){
+  const h=[],lt=(a,b)=>a[0]<b[0]||(a[0]===b[0]&&a[1]>b[1]);
+  const up=i=>{while(i>0){const p=(i-1)>>1;if(!lt(h[i],h[p]))break;[h[i],h[p]]=[h[p],h[i]];i=p}};
+  const down=i=>{for(;;){const l=2*i+1,r=l+1;let s=i;if(l<h.length&&lt(h[l],h[s]))s=l;if(r<h.length&&lt(h[r],h[s]))s=r;if(s===i)break;[h[i],h[s]]=[h[s],h[i]];i=s}};
+  const pop=()=>{const t=h[0],last=h.pop();if(h.length){h[0]=last;down(0)}return t};
+  for(const it of items){if(it[0]<=0)continue;h.push(it);up(h.length-1);if(h.length>k)pop()}
+  const out=[];while(h.length)out.unshift(pop());return out;
+}
+
+/* ---------- edit distance (dynamic programming) ---------- */
+function ed(a,b){
+  const dp=Array.from({length:a.length+1},(_,i)=>Array.from({length:b.length+1},(_,j)=>i?(j?0:i):j));
+  for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)
+    dp[i][j]=Math.min(dp[i-1][j]+1,dp[i][j-1]+1,dp[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+  return dp;
+}
+function suggest(w){
+  const lim=w.length<=4?1:2;let best=null,bd=lim+1,bf=0;
+  for(const b of B)for(const e of b){
+    if(Math.abs(e.w.length-w.length)>lim)continue;
+    const d=ed(w,e.w)[w.length][e.w.length];
+    if(d<bd||(d===bd&&e.total>bf)){bd=d;bf=e.total;best=e.w}
+  }
+  return bd<=lim?best:null;
+}
+
+/* ---------- TF-IDF search ---------- */
+function search(q){
+  const terms=[...new Set(words(q).filter(w=>!STOP.has(w)))].slice(0,8);
+  const sc=new Array(D.length).fill(0),info=[],unk=[];
+  for(const w of terms){
+    const e=find(w);
+    if(!e){unk.push({w,s:suggest(w)});continue}
+    const idf=Math.log(1+D.length/e.post.length);
+    info.push({w,b:hs(w),chain:B[hs(w)].length,df:e.post.length,idf});
+    for(const [d,c] of e.post)sc[d]+=c/D[d].len*idf;
+  }
+  return{terms,unk,info,matches:sc.filter(s=>s>0).length,hits:topK(sc.map((s,i)=>[s,i]),5)};
+}
+
+/* ---------- recent searches: circular queue of 5 ---------- */
+const H={a:Array(5),h:0,n:0};
+const getH=i=>H.a[(H.h+H.n-1-i)%5];
+function pushH(q){
+  if(H.n&&getH(0)===q)return;
+  if(H.n<5){H.a[(H.h+H.n)%5]=q;H.n++}else{H.a[H.h]=q;H.h=(H.h+1)%5}
+}
+
+/* ---------- UI ---------- */
+const $=id=>document.getElementById(id);
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const hl=(seg,set)=>seg.split(/([A-Za-z]+)/).map((p,i)=>i%2?(set.has(p.toLowerCase())?"<mark>"+p+"</mark>":p):esc(p)).join("");
+
+function snip(text,set){
+  let m=-1,x;const re=/[A-Za-z]+/g;
+  while((x=re.exec(text))){if(set.has(x[0].toLowerCase())){m=x.index;break}}
+  let s=Math.max(0,m-40);
+  if(s>0){const sp=text.indexOf(" ",s);s=(sp>-1&&sp<m)?sp+1:m}
+  return (s>0?"\u2026":"")+hl(text.slice(s,s+140),set)+(s+140<text.length?"\u2026":"");
+}
+
+function drawH(){
+  let h="";
+  for(let i=0;i<H.n;i++)h+='<button data-q="'+esc(getH(i))+'">'+esc(getH(i))+"</button>";
+  $("rc").innerHTML=h?'<span class="mu">Recent: </span>'+h:"";
+}
+
+function run(q){
+  q=q.trim();if(!q)return;
+  const r=search(q);
+  if(!r.terms.length){$("out").innerHTML='<div class="card">Please type at least one meaningful word.</div>';return}
+  pushH(q);drawH();
+  const set=new Set(r.terms);let h="";
+  const fix=r.terms.map(t=>{const u=r.unk.find(x=>x.w===t);return u&&u.s?u.s:t}).join(" ");
+  if(r.unk.length){
+    h+='<div class="card">'+r.unk.map(u=>u.s?"":"<div><b>"+esc(u.w)+"</b> is not in the index.</div>").join("");
+    if(r.unk.some(u=>u.s))h+='Did you mean <a href="#" data-q="'+fix+'"><b>'+fix+'</b></a>? <small class="mu">(edit distance)</small>';
+    h+="</div>";
+  }
+  if(r.hits.length){
+    h+='<p class="mu">'+r.matches+" matching document"+(r.matches==1?"":"s")+"; top "+r.hits.length+" picked with a min-heap</p>";
+    const top=r.hits[0][0];
+    r.hits.forEach(([s,id],i)=>{
+      const d=D[id];
+      h+='<div class="card res"><div class="rh"><span class="rk">'+(i+1)+'</span><b>'+esc(d.title)+'</b><span class="pill">score '+s.toFixed(3)+'</span></div><div class="bar"><i style="width:'+(s/top*100)+'%"></i></div><p>'+snip(d.text,set)+"</p></div>";
+    });
+  }else h+='<div class="card">No documents matched.</div>';
+  if(r.info.length){
+    h+='<div class="card ov"><b>Under the hood</b><p class="mu">Each word is found through the hash table (bucket = djb2 hash mod '+TS+'), then scored with idf = ln(1 + N / df).</p><table><tr><th>Word</th><th>Bucket</th><th>Chain length</th><th>Docs (df)</th><th>idf</th></tr>'+
+      r.info.map(i=>"<tr><td>"+esc(i.w)+"</td><td>"+i.b+"</td><td>"+i.chain+"</td><td>"+i.df+"</td><td>"+i.idf.toFixed(3)+"</td></tr>").join("")+"</table></div>";
+  }
+  $("out").innerHTML=h;
+}
+
+function drawStats(){
+  let used=0,long=0;
+  B.forEach(b=>{if(b.length)used++;long=Math.max(long,b.length)});
+  const all=complete(""),top=topK(all.map(([w,f],i)=>[f,i]),10),mx=top[0][0];
+  $("st").innerHTML='<div class="grid">'+
+    [["Documents",D.length],["Indexed words",total],["Unique words",U],["Load factor",(U/TS).toFixed(2)],["Empty buckets",TS-used],["Longest chain",long]]
+    .map(([k,v])=>'<div class="card stat"><b>'+v+"</b>"+k+"</div>").join("")+
+    '</div><div class="card"><b>Top 10 words</b>'+
+    top.map(([f,i])=>"<div>"+all[i][0]+' <span class="mu">'+f+'</span><div class="bar"><i style="width:'+(f/mx*100)+'%"></i></div></div>').join("")+"</div>";
+}
+
+function drawEd(){
+  const a=$("ea").value.toLowerCase(),b=$("eb").value.toLowerCase(),dp=ed(a,b);
+  let h="<table><tr><th></th><th></th>"+[...b].map(c=>"<th>"+esc(c)+"</th>").join("")+"</tr>";
+  dp.forEach((row,i)=>{
+    h+="<tr><th>"+(i?esc(a[i-1]):"")+"</th>"+row.map((v,j)=>"<td"+(i===a.length&&j===b.length?' style="background:var(--mk)"':"")+">"+v+"</td>").join("")+"</tr>";
+  });
+  $("etb").innerHTML=h+"</table><p>Edit distance = <b>"+dp[a.length][b.length]+"</b> (the highlighted bottom-right cell)</p>";
+}
+
+/* ---------- wiring ---------- */
+const qi=$("q"),dd=$("dd");
+qi.addEventListener("input",()=>{
+  const m=qi.value.match(/[A-Za-z]+$/);
+  if(!m){dd.style.display="none";return}
+  const c=complete(m[0].toLowerCase()),top=topK(c.map(([w,f],i)=>[f,i]),5);
+  if(!top.length){dd.style.display="none";return}
+  dd.innerHTML=top.map(([f,i])=>'<div data-w="'+c[i][0]+'">'+c[i][0]+' <small class="mu">'+f+"x</small></div>").join("");
+  dd.style.display="block";
+});
+dd.addEventListener("mousedown",e=>{
+  const w=e.target.closest("[data-w]");if(!w)return;
+  e.preventDefault();
+  qi.value=qi.value.replace(/[A-Za-z]+$/,w.dataset.w)+" ";dd.style.display="none";qi.focus();
+});
+qi.addEventListener("blur",()=>dd.style.display="none");
+qi.addEventListener("keydown",e=>{if(e.key==="Enter"){dd.style.display="none";run(qi.value)}});
+$("go").onclick=()=>run(qi.value);
+document.addEventListener("click",e=>{
+  const a=e.target.closest("[data-q]");
+  if(a){e.preventDefault();qi.value=a.dataset.q;run(a.dataset.q);return}
+  const t=e.target.closest("[data-t]");
+  if(t){
+    document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b===t));
+    document.querySelectorAll("section").forEach(s=>s.hidden=s.id!==t.dataset.t);
+    if(t.dataset.t==="t")drawStats();
+    if(t.dataset.t==="e")drawEd();
+  }
+});
+$("add").onclick=()=>{
+  const t=$("dt").value.trim(),x=$("dx").value.trim();
+  if(!t||!x){$("am").textContent="Please enter both a title and some text.";return}
+  const u=U;addDoc(t,x);
+  $("am").textContent="Indexed document #"+D.length+": "+D[D.length-1].len+" words, "+(U-u)+" new unique words. Try searching for it!";
+  $("dt").value=$("dx").value="";
+};
+$("ea").oninput=$("eb").oninput=drawEd;
+
+B=Array.from({length:TS},()=>[]);T={c:{},f:0};D=[];total=0;U=0;
+DOCS.forEach(d=>addDoc(d[0],d[1]));
+</script>
+</body>
+</html>
